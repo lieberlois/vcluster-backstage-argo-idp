@@ -1,0 +1,131 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: vcluster-add
+  namespace: argo
+spec:
+  eventBusName: vcluster
+  template:
+    serviceAccountName: argocd-workflow
+  dependencies:
+    - name: vcluster-add
+      eventSourceName: vcluster-add
+      eventName: vcluster-add
+  triggers:
+    - template:
+        name: vcluster-add
+        k8s:
+          operation: create
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                generateName: vcluster-add-
+                labels:
+                  app: vcluster-add
+              spec:
+                entrypoint: add-vcluster
+                serviceAccountName: argocd-workflow
+                arguments:
+                  parameters:
+                  - name: cluster
+                    # the value will get overridden by the event payload from vcluster-add
+                    value: ""
+                templates:
+                - name: add-vcluster
+                  inputs:
+                    parameters:
+                    - name: cluster
+                  container:
+                    image: mtougeron/hundreds-of-clusters-demo
+                    command: [
+                      "/bin/bash", "-c",
+                      "argocd login argocd-server.argocd.svc:443 --core --insecure --plaintext --grpc-web --username $USERNAME --password $PASSWORD \
+                        && sleep 60 \
+                        && kubectl get secret -n vcluster {{inputs.parameters.cluster}}-kubeconfig -o jsonpath={.data.value} | base64 --decode > capikubeconfig \
+                        && kubectl config set-cluster in-cluster --server=https://kubernetes.default.svc.cluster.local --certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt --embed-certs=true ; kubectl config set-credentials clusterctl --token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token) ; kubectl config set-context in-cluster --cluster in-cluster --user clusterctl --namespace argocd ; kubectl config use-context in-cluster \
+                        && argocd cluster add kubernetes-admin@kubernetes --server argocd-server.argocd.svc:443 --insecure --kubeconfig capikubeconfig --name {{inputs.parameters.cluster}}"
+                    ]
+                    env:
+                    - name: USERNAME
+                      valueFrom:
+                        secretKeyRef:
+                          key: username
+                          name: argocd-login
+                    - name: PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                          key: password
+                          name: argocd-login
+          parameters:
+            - src:
+                dependencyName: vcluster-add
+                dataKey: body.metadata.name
+              dest: spec.arguments.parameters.0.value
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: vcluster-delete
+  namespace: argo
+spec:
+  eventBusName: vcluster
+  template:
+    serviceAccountName: argocd-workflow
+  dependencies:
+    - name: vcluster-delete
+      eventSourceName: vcluster-delete
+      eventName: vcluster-delete
+  triggers:
+    - template:
+        name: vcluster-delete
+        k8s:
+          operation: create
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                generateName: vcluster-delete-
+                labels:
+                  app: vcluster-delete
+              spec:
+                entrypoint: delete-vcluster
+                serviceAccountName: argocd-workflow
+                arguments:
+                  parameters:
+                  - name: cluster
+                    # the value will get overridden by the event payload from vcluster-delete
+                    value: ""
+                templates:
+                - name: delete-vcluster
+                  inputs:
+                    parameters:
+                    - name: cluster
+                  container:
+                    image: mtougeron/hundreds-of-clusters-demo
+                    command: [
+                      "/bin/bash", "-c",
+                      "argocd login argocd-server.argocd.svc:443 --core --insecure --plaintext --grpc-web --username $USERNAME --password $PASSWORD \
+                        && kubectl get secret -n vcluster {{inputs.parameters.cluster}}-kubeconfig -o jsonpath={.data.value} | base64 --decode > capikubeconfig \
+                        && kubectl config set-cluster in-cluster --server=https://kubernetes.default.svc.cluster.local --certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt --embed-certs=true ; kubectl config set-credentials clusterctl --token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token) ; kubectl config set-context in-cluster --cluster in-cluster --user clusterctl --namespace argocd ; kubectl config use-context in-cluster \
+                        && argocd cluster rm {{inputs.parameters.cluster}}"
+                    ]
+                    env:
+                    - name: USERNAME
+                      valueFrom:
+                        secretKeyRef:
+                          key: username
+                          name: argocd-login
+                    - name: PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                          key: password
+                          name: argocd-login
+          parameters:
+            - src:
+                dependencyName: vcluster-delete
+                dataKey: body.metadata.name
+              dest: spec.arguments.parameters.0.value
+

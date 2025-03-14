@@ -1,0 +1,4 @@
+clusterName: ""
+vclusterVersion: 0.22.1
+kubernetesVersion: "1.31"
+serviceCIDR: "172.20.0.0/16"

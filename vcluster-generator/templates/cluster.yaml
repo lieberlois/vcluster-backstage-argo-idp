@@ -1,0 +1,13 @@
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: {{ .Values.clusterName | required "The cluster name is required." }}
+  namespace: vcluster
+  labels:
+    name: {{ .Values.clusterName }}
+spec:
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+    kind: VCluster
+    name: {{ .Values.clusterName }}

@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vcluster-events
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/lieberlois/vcluster-backstage-argo-idp.git
+    targetRevision: HEAD
+    path: apps/vcluster-events
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    automated: 
+      prune: true
+      selfHeal: true
+

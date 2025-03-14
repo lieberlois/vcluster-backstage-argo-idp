@@ -1,0 +1,16 @@
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+kind: VCluster
+metadata:
+  name: {{ .Values.clusterName }}
+  namespace: vcluster
+spec:
+  controlPlaneEndpoint:
+    host: {{ .Values.clusterName }}.vcluster
+    port: 443
+  helmRelease:
+    version: null
+    chart:
+      name: vcluster
+      repo: https://charts.loft.sh
+      version: {{ .Values.vclusterVersion }}
