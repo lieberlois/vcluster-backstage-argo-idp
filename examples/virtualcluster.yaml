@@ -1,0 +1,12 @@
+---
+apiVersion: idp.lieberlois/v1alpha1
+kind: VirtualCluster
+metadata:
+  name: customer1
+spec: {}
+---
+apiVersion: idp.lieberlois/v1alpha1
+kind: VirtualCluster
+metadata:
+  name: customer2
+spec: {}

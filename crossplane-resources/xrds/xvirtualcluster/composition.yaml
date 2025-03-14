@@ -1,0 +1,97 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: virtualcluster
+  labels:
+    crossplane.io/xrd: xvirtualclusters.idp.lieberlois
+    provider: helm
+spec:
+  compositeTypeRef:
+    apiVersion: idp.lieberlois/v1alpha1
+    kind: XVirtualCluster
+  resources:
+  - name: vcluster
+    base:
+      apiVersion: helm.crossplane.io/v1beta1
+      kind: Release
+      name: vcluster-test
+      spec:
+        forProvider:
+          chart:
+            name: vcluster
+            repository: https://charts.loft.sh
+            version: 0.14.0
+          namespace: vcluster-test
+          values:
+            syncer:
+              extraArgs:
+              - --out-kube-config-secret=vcluster-kubeconfig
+              - --out-kube-config-server=https://vcluster-test.vcluster-test.svc.cluster.local
+              - --tls-san=vcluster-test.vcluster-test.svc.cluster.local
+            sync:
+              ingresses:
+                enabled: true
+              poddisruptionbudgets:
+                enabled: true
+        providerConfigRef:
+          name: helm-provider
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.forProvider.namespace
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: metadata.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-vcluster"
+    - type: CombineFromComposite
+      combine:
+        variables:
+        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.name
+        strategy: string
+        string:
+          fmt: "--out-kube-config-server=https://%s-vcluster.%s.svc.cluster.local"
+      toFieldPath: spec.forProvider.values.syncer.extraArgs[1]
+    - type: CombineFromComposite
+      combine:
+        variables:
+        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.name
+        strategy: string
+        string:
+          fmt: "--tls-san=%s-vcluster.%s.svc.cluster.local"
+      toFieldPath: spec.forProvider.values.syncer.extraArgs[2]
+  - name: argo-cluster
+    base:
+      apiVersion: cluster.argocd.crossplane.io/v1alpha1
+      kind: Cluster
+      name: vcluster-test
+      spec:
+        forProvider:
+          labels:
+            managed-by: crossplane
+          config:
+            kubeconfigSecretRef:
+              key: config
+              name: vcluster-kubeconfig
+              namespace: vcluster-test
+          name: vcluster-test
+        providerConfigRef:
+          name: argocd-provider
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.forProvider.config.kubeconfigSecretRef.namespace
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: metadata.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-argo-ref"
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.forProvider.name

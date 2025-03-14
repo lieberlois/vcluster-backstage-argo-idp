@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: crossplane-resources
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+  - git:
+      repoURL: https://github.com/lieberlois/vcluster-backstage-argo-idp
+      revision: HEAD
+      directories:
+        - path: crossplane-resources/*
+      requeueAfterSeconds: 30
+  template:
+    metadata:
+      name: '{{.path.basename}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/lieberlois/vcluster-backstage-argo-idp
+        targetRevision: HEAD
+        path: '{{.path.path}}'
+        directory:
+          recurse: true
+      destination:
+        namespace: default
+        server: https://kubernetes.default.svc
+      syncPolicy:
+        syncOptions:
+        - CreateNamespace=true
+        automated:
+          prune: true
+          selfHeal: true
+
