@@ -10,3 +10,15 @@ kind: VirtualCluster
 metadata:
   name: customer2
 spec: {}
+---
+apiVersion: idp.lieberlois/v1alpha1
+kind: VirtualCluster
+metadata:
+  name: customer3
+spec: {}
+---
+apiVersion: idp.lieberlois/v1alpha1
+kind: VirtualCluster
+metadata:
+  name: customer4
+spec: {}

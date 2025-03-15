@@ -22,6 +22,11 @@ trap '{
     kill $argo_portforward_pid
 }' EXIT
 
+while ! nc -vz localhost 8443 >/dev/null 2>&1; do
+  echo Waiting for ArgoCD server to become reachable...
+  sleep 1
+done
+
 ARGOCD_ADMIN_SECRET=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
 
 # Temporary JWT token

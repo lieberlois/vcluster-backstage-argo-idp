@@ -93,3 +93,52 @@ spec:
     - type: FromCompositeFieldPath
       fromFieldPath: metadata.name
       toFieldPath: spec.forProvider.name
+  - name: cluster-usage
+    base:
+      apiVersion: apiextensions.crossplane.io/v1beta1
+      kind: Usage
+      name: argo-cluster-uses-helm-release
+      spec:
+        of:
+          apiVersion: helm.crossplane.io/v1beta1
+          kind: Release
+          resourceRef:
+            name: vcluster-test
+        by:
+          apiVersion: cluster.argocd.crossplane.io/v1alpha1
+          kind: Cluster
+          resourceRef:
+            name: my-prometheus-chart
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.of.resourceRef.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-vcluster"
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.by.resourceRef.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-argo-ref"
+  - name: observe-delete-namespace
+    base:
+      apiVersion: kubernetes.crossplane.io/v1alpha1
+      kind: Object
+      metadata:
+        name: foo
+      spec:
+        managementPolicy: ObserveDelete
+        forProvider:
+          manifest:
+            apiVersion: v1
+            kind: Namespace
+        providerConfigRef:
+          name: kubernetes-provider
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: metadata.name
