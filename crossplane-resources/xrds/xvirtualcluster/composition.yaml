@@ -20,19 +20,17 @@ spec:
           chart:
             name: vcluster
             repository: https://charts.loft.sh
-            version: 0.14.0
+            version: 0.23.0
           namespace: vcluster-test
           values:
-            syncer:
-              extraArgs:
-              - --out-kube-config-secret=vcluster-kubeconfig
-              - --out-kube-config-server=https://vcluster-test.vcluster-test.svc.cluster.local
-              - --tls-san=vcluster-test.vcluster-test.svc.cluster.local
-            sync:
-              ingresses:
-                enabled: true
-              poddisruptionbudgets:
-                enabled: true
+            controlPlane:
+              proxy:
+                extraSANs:
+                  - vcluster-test.vcluster-test.svc.cluster.local
+            exportKubeConfig:
+              secret:
+                name: vcluster-kubeconfig
+              server: https://vcluster-test.vcluster-test.svc.cluster.local
         providerConfigRef:
           name: helm-provider
     patches:
@@ -53,8 +51,8 @@ spec:
         - fromFieldPath: metadata.name
         strategy: string
         string:
-          fmt: "--out-kube-config-server=https://%s-vcluster.%s.svc.cluster.local"
-      toFieldPath: spec.forProvider.values.syncer.extraArgs[1]
+          fmt: "https://%s-vcluster.%s.svc.cluster.local"
+      toFieldPath: spec.forProvider.values.exportKubeConfig.server
     - type: CombineFromComposite
       combine:
         variables:
@@ -62,8 +60,8 @@ spec:
         - fromFieldPath: metadata.name
         strategy: string
         string:
-          fmt: "--tls-san=%s-vcluster.%s.svc.cluster.local"
-      toFieldPath: spec.forProvider.values.syncer.extraArgs[2]
+          fmt: "%s-vcluster.%s.svc.cluster.local"
+      toFieldPath: spec.forProvider.values.controlPlane.proxy.extraSANs[0]
   - name: argo-cluster
     base:
       apiVersion: cluster.argocd.crossplane.io/v1alpha1

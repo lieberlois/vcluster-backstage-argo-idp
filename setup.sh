@@ -32,7 +32,7 @@ ARGOCD_PROVIDER_USER="provider-argocd"
 ARGOCD_TOKEN=$(curl -s -X POST -k -H "Authorization: Bearer $ARGOCD_ADMIN_TOKEN" -H "Content-Type: application/json" https://localhost:8443/api/v1/account/$ARGOCD_PROVIDER_USER/token | jq -r .token)
 
 kubectl create namespace crossplane-system || true
-kubectl create secret generic argocd-credentials -n crossplane-system --from-literal=authToken="$ARGOCD_API_TOKEN"
+kubectl create secret generic argocd-credentials -n crossplane-system --from-literal=authToken="$ARGOCD_TOKEN"
 
 echo "Bootstrap applications..."
 kubectl apply -f root-argocd-app.yaml
