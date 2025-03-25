@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: virtualclusters
+  description: Virtual Clusters registered via Backstage
+spec:
+  type: infrastructure
+  owner: lieberlois
+  lifecycle: development
+
