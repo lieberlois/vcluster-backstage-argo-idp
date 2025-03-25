@@ -1,0 +1,6 @@
+apiVersion: idp.lieberlois/v1alpha1
+kind: VirtualCluster
+metadata:
+  name: abcv
+spec: {}
+
