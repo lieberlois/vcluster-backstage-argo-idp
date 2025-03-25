@@ -1,0 +1,67 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: v1beta3-demo
+  title: Team
+  description: Creates a Cluster for your team
+spec:
+  owner: lieberlois
+  type: infrastructure
+
+  parameters:
+    - title: Fill in some steps
+      required:
+        - name
+      properties:
+        name:
+          title: Name
+          type: string
+          description: Unique name of the component
+          ui:autofocus: true
+          ui:options:
+            rows: 5
+
+  steps:
+    - id: log-message
+      name: Log Message
+      action: debug:log
+      input:
+        message: Created the manifest for the ${{ parameters.name }} Virtual Kubernetes cluster.
+
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:template
+      input:
+        url: templates
+        targetPath: clusters
+        values:
+          name: ${{ parameters.name }}
+
+    - id: rename-manifest
+      action: fs:rename
+      name: Rename files
+      input:
+        files:
+        - from: clusters/virtualcluster.yaml
+          to: clusters/virtualcluster-${{ parameters.name }}.yaml
+
+    - id: create-pull-request
+      action: publish:github:pull-request
+      name: Create a pull request
+      input:
+        repoUrl: github.com?repo=vcluster-backstage-argo-idp&owner=lieberlois
+        branchName: cluster-${{ parameters.name }}
+        gitCommitMessage: Add vCluster for team ${{ parameters.name }}
+        title: vCluster manifest ${{ parameters.name }}
+        description: This pull request creates the virtualcluster-${{ parameters.name }}.yaml Kubernetes cluster manifest
+      output:
+        links:
+        - title: Pull Request
+          url: ${{ steps['create-pull-request'].output.remoteUrl }}
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: https://github.com/lieberlois/vcluster-backstage-argo-idp
+        catalogInfoPath: '/catalog-info.yaml'
