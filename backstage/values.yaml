@@ -1,12 +1,15 @@
 backstage:
   backstage:
+    extraEnvVarsSecrets:
+      - "github-token"
+
     appConfig:
       app:
-        title: Backstage
+        title: Scaffolded Backstage App
         baseUrl: http://localhost:3000
 
       organization:
-        name: IdP Demo
+        name: My Company
 
       backend:
         auth:
@@ -69,41 +72,9 @@ backstage:
 
       scaffolder:
         # see https://backstage.io/docs/features/software-templates/configuration for software template options
-
       catalog:
-        import:
-          entityFilename: catalog-info.yaml
-          pullRequestBranchName: backstage-integration
         rules:
-          - allow: [Component, System, API, Resource, Location]
-        locations:
-          # Local example data, file locations are relative to the backend process, typically `packages/backend`
-          - type: file
-            target: ../../examples/entities.yaml
-
-          # Local example template
-          - type: file
-            target: ../../examples/template/template.yaml
-            rules:
-              - allow: [Template]
-
-          # Local example organizational data
-          - type: file
-            target: ../../examples/org.yaml
-            rules:
-              - allow: [User, Group]
-
-          ## Uncomment these lines to add more example data
-          # - type: url
-          #   target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all.yaml
-
-          ## Uncomment these lines to add an example org
-          # - type: url
-          #   target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme-corp.yaml
-          #   rules:
-          #     - allow: [User, Group]
-        # Experimental: Always use the search method in UrlReaderProcessor.
-        # New adopters are encouraged to enable it as this behavior will be the default in a future release.
+          - allow: [Component, Group, User, Resource, Location, Template]
         useUrlReadersSearch: true
 
       kubernetes:

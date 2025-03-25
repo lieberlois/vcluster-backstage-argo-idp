@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: virtualcluster
+  description: Documentation for the ODP Java Capability Template
+spec:
+  type: infrastructure
+  owner: lieberlois
+  lifecycle: development
+
