@@ -1,0 +1,9 @@
+apiVersion: v2
+type: application
+name: backstage-argocd
+version: 0.0.0 # unused
+appVersion: 0.0.0 # unused
+dependencies:
+  - name: backstage
+    repository: oci://ghcr.io/backstage/charts
+    version: 2.4.0
