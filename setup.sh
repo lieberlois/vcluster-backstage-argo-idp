@@ -10,6 +10,11 @@ if [[ "$(kubectl config current-context)" != "kind-kind" ]]; then
   exit 1
 fi
 
+if [[ -z "$GITHUB_TOKEN" ]]; then
+  echo "GITHUB_TOKEN environment variable not set..."
+  exit 1
+fi
+
 echo "Installing ArgoCD..."
 echo "=================================================="
 kubectl apply -k argocd/install
@@ -37,7 +42,9 @@ ARGOCD_PROVIDER_USER="provider-argocd"
 ARGOCD_TOKEN=$(curl -s -X POST -k -H "Authorization: Bearer $ARGOCD_ADMIN_TOKEN" -H "Content-Type: application/json" https://localhost:8443/api/v1/account/$ARGOCD_PROVIDER_USER/token | jq -r .token)
 
 kubectl create namespace crossplane-system || true
-kubectl create secret generic argocd-credentials -n crossplane-system --from-literal=authToken="$ARGOCD_TOKEN"
+kubectl create secret generic argocd-credentials -n crossplane-system --from-literal=authToken="$ARGOCD_TOKEN" || true
+
+kubectl create secret generic github-token -n backstage --from-literal GITHUB_TOKEN="$GITHUB_TOKEN" || true
 
 echo "Bootstrap applications..."
 kubectl apply -f root-argocd-app.yaml

@@ -75,10 +75,9 @@ backstage:
       catalog:
         rules:
           - allow: [Component, Group, User, Resource, Location, Template]
+
         useUrlReadersSearch: true
         providers:
-          # GitHub discovery: https://backstage.io/docs/integrations/github/discovery/
-          # Don't forget to define an integration for GitHub
           github:
             backstage:
               organization: lieberlois
@@ -89,6 +88,10 @@ backstage:
               schedule:
                 frequency: { minutes: 5 }
                 timeout: { minutes: 3 }
+
+        locations:
+          - type: url
+            target: https://github.com/lieberlois/vcluster-backstage-argo-idp/blob/main/backstage-templates/virtualcluster/template.yaml
 
       # see https://backstage.io/docs/permissions/getting-started for more on the permission framework
       permission:
