@@ -1,0 +1,24 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "test-team"
+  title: "vcluster-test-team"
+  description: "Virtual Kubernetes Cluster for Team test-team"
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: infrastructure
+  owner: "test-team"
+  lifecycle: development
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: "test-team"
+  description: "Group for application team test-team"
+spec:
+  type: business-unit
+  profile:
+    displayName: test-team
+  parent: applications
+  children: []
