@@ -20,15 +20,10 @@ spec:
     namespace: crossplane-system
   syncPolicy:
     automated:
-      prune: true    
+      prune: true
+      selfHeal: true
     syncOptions:
     - CreateNamespace=true
-    retry:
-      limit: 1
-      backoff:
-        duration: 5s 
-        factor: 2 
-        maxDuration: 1m
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet

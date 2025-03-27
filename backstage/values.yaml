@@ -76,6 +76,11 @@ backstage:
         rules:
           - allow: [Component, Group, User, Resource, Location, Template]
         useUrlReadersSearch: true
+
+        # locations:
+        #   - type: url
+        #     target: https://github.com/lieberlois/vcluster-backstage-argo-idp/blob/main/backstage-templates/virtualcluster/template.yaml
+        #
         providers:
           # GitHub discovery: https://backstage.io/docs/integrations/github/discovery/
           # Don't forget to define an integration for GitHub
