@@ -22,28 +22,14 @@ spec:
             rows: 5
 
   steps:
-    - id: log-message
-      name: Log Message
-      action: debug:log
-      input:
-        message: Created the manifest for the ${{ parameters.name }} Virtual Kubernetes cluster.
-
     - id: fetch-base
       name: Fetch Base
       action: fetch:template
       input:
-        url: templates
-        targetPath: clusters
+        url: skeleton
+        targetPath: "tenant-applications/vcluster-${{ parameters.name }}"
         values:
           name: ${{ parameters.name }}
-
-    - id: rename-manifest
-      action: fs:rename
-      name: Rename files
-      input:
-        files:
-        - from: clusters/virtualcluster.yaml
-          to: clusters/virtualcluster-${{ parameters.name }}.yaml
 
     - id: create-pull-request
       action: publish:github:pull-request
@@ -59,9 +45,10 @@ spec:
         - title: Pull Request
           url: ${{ steps['create-pull-request'].output.remoteUrl }}
 
-    # - id: register
-    #   name: Register
-    #   action: catalog:register
-    #   input:
-    #     repoContentsUrl: https://github.com/lieberlois/vcluster-backstage-argo-idp/blob/main
-    #     catalogInfoPath: '/catalog-info.yaml'
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: https://github.com/lieberlois/vcluster-backstage-argo-idp/blob/main
+        catalogInfoPath: /tenant-applications/vcluster-${{ parameters.name }}/backstage/catalog-info.yaml
+        optional: true

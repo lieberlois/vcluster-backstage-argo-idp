@@ -1,0 +1,24 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "${{ values.name }}"
+  title: "vcluster-${{ values.name }}"
+  description: "Virtual Kubernetes Cluster for Team ${{ values.name }}"
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: infrastructure
+  owner: "${{ values.name }}"
+  lifecycle: development
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: "${{ values.name }}"
+  description: "Group for application team ${{ values.name }}"
+spec:
+  type: business-unit
+  profile:
+    displayName: ${{ values.name }}
+  parent: applications
+  children: []
