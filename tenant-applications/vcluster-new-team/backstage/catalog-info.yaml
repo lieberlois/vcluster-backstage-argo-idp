@@ -1,0 +1,24 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "new-team"
+  title: "vcluster-new-team"
+  description: "Virtual Kubernetes Cluster for Team new-team"
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: infrastructure
+  owner: "new-team"
+  lifecycle: development
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: "new-team"
+  description: "Group for application team new-team"
+spec:
+  type: business-unit
+  profile:
+    displayName: new-team
+  parent: applications
+  children: []
