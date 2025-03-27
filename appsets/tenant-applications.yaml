@@ -3,7 +3,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: clusters
+  name: tenant-applications
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "10"
@@ -14,7 +14,7 @@ spec:
   source:
     repoURL: https://github.com/lieberlois/vcluster-backstage-argo-idp
     targetRevision: HEAD
-    path: clusters
+    path: tenant-applications
   destination:
     server: https://kubernetes.default.svc
     namespace: default

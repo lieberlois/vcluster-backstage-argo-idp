@@ -1,6 +1,0 @@
-apiVersion: idp.lieberlois/v1alpha1
-kind: VirtualCluster
-metadata:
-  name: customer-12345-backstage
-spec: {}
-

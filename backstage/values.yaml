@@ -76,12 +76,22 @@ backstage:
         rules:
           - allow: [Component, Group, User, Resource, Location, Template]
         useUrlReadersSearch: true
-
-      kubernetes:
-        # see https://backstage.io/docs/features/kubernetes/configuration for kubernetes configuration options
+        providers:
+          # GitHub discovery: https://backstage.io/docs/integrations/github/discovery/
+          # Don't forget to define an integration for GitHub
+          github:
+            backstage:
+              organization: lieberlois
+              catalogPath: '**/catalog-info.yaml' # this will search recursively all folders for catalog-info.yaml files
+              filters:
+                repository: "vcluster-backstage-argo-idp"
+                branch: "main"
+              schedule:
+                frequency: { minutes: 5 }
+                timeout: { minutes: 3 }
 
       # see https://backstage.io/docs/permissions/getting-started for more on the permission framework
       permission:
         # setting this to `false` will disable permissions
-        enabled: true
+        enabled: false
 
