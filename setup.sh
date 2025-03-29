@@ -44,6 +44,7 @@ ARGOCD_TOKEN=$(curl -s -X POST -k -H "Authorization: Bearer $ARGOCD_ADMIN_TOKEN"
 kubectl create namespace crossplane-system || true
 kubectl create secret generic argocd-credentials -n crossplane-system --from-literal=authToken="$ARGOCD_TOKEN" || true
 
+kubectl create namespace backstage || true
 kubectl create secret generic github-token -n backstage --from-literal GITHUB_TOKEN="$GITHUB_TOKEN" || true
 
 echo "Bootstrap applications..."

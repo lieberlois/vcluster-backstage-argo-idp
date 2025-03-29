@@ -77,10 +77,10 @@ backstage:
           - allow: [Component, Group, User, Resource, Location, Template]
         useUrlReadersSearch: true
 
-        # locations:
-        #   - type: url
-        #     target: https://github.com/lieberlois/vcluster-backstage-argo-idp/blob/main/backstage-templates/virtualcluster/template.yaml
-        #
+        locations:
+          - type: url
+            target: https://github.com/lieberlois/vcluster-backstage-argo-idp/blob/main/backstage-templates/virtualcluster/template.yaml
+
         providers:
           # GitHub discovery: https://backstage.io/docs/integrations/github/discovery/
           # Don't forget to define an integration for GitHub
@@ -92,8 +92,15 @@ backstage:
                 repository: "vcluster-backstage-argo-idp"
                 branch: "main"
               schedule:
-                frequency: { minutes: 5 }
-                timeout: { minutes: 3 }
+                frequency: { minutes: 2 }
+                timeout: { minutes: 1 }
+
+      kubernetes:
+        serviceLocatorMethod:
+          type: multiTenant
+        clusterLocatorMethods:
+          - type: config
+            clusters: []
 
       # see https://backstage.io/docs/permissions/getting-started for more on the permission framework
       permission:
