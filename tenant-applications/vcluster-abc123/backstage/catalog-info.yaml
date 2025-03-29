@@ -1,0 +1,24 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "abc123"
+  title: "vcluster-abc123"
+  description: "Virtual Kubernetes Cluster for Team abc123"
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: infrastructure
+  owner: "abc123"
+  lifecycle: development
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: "abc123"
+  description: "Group for application team abc123"
+spec:
+  type: business-unit
+  profile:
+    displayName: abc123
+  parent: applications
+  children: []
