@@ -1,0 +1,24 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "1337-cluster"
+  title: "vcluster-1337-cluster"
+  description: "Virtual Kubernetes Cluster for Team 1337-cluster"
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: infrastructure
+  owner: "1337-cluster"
+  lifecycle: development
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: "1337-cluster"
+  description: "Group for application team 1337-cluster"
+spec:
+  type: business-unit
+  profile:
+    displayName: 1337-cluster
+  parent: applications
+  children: []
