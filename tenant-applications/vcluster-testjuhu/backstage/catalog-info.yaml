@@ -1,0 +1,24 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "testjuhu"
+  title: "vcluster-testjuhu"
+  description: "Virtual Kubernetes Cluster for Team testjuhu"
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: infrastructure
+  owner: "testjuhu"
+  lifecycle: development
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: "testjuhu"
+  description: "Group for application team testjuhu"
+spec:
+  type: business-unit
+  profile:
+    displayName: testjuhu
+  parent: applications
+  children: []
