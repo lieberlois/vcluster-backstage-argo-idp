@@ -1,17 +1,21 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: all-apps
+  name: crossplane-providers
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   project: default
   source:
-    repoURL: https://github.com/lieberlois/vcluster-backstage-argo-idp.git
-    targetRevision: main
-    path: appsets
+    repoURL: cnoe://idp/crossplane-providers
+    targetRevision: HEAD
+    path: .
+    directory:
+      recurse: true
   destination:
+    namespace: default
     server: https://kubernetes.default.svc
-    namespace: argocd
   syncPolicy:
     syncOptions:
     - CreateNamespace=true

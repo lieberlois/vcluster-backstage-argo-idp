@@ -1,0 +1,9 @@
+apiVersion: idp.lieberlois/v1alpha1
+kind: VirtualCluster
+metadata:
+  name: ${{ values.name }}
+  namespace: default
+  labels:
+    entity-id: ${{ values.name }}
+spec: {}
+

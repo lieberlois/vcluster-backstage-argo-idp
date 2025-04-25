@@ -1,0 +1,159 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: virtualcluster
+  labels:
+    crossplane.io/xrd: xvirtualclusters.idp.lieberlois
+    provider: helm
+spec:
+  compositeTypeRef:
+    apiVersion: idp.lieberlois/v1alpha1
+    kind: XVirtualCluster
+  resources:
+  - name: vcluster
+    base:
+      apiVersion: helm.crossplane.io/v1beta1
+      kind: Release
+      name: vcluster-test
+      spec:
+        forProvider:
+          chart:
+            name: vcluster
+            repository: https://charts.loft.sh
+            version: 0.23.0
+          namespace: vcluster-test
+          values:
+            controlPlane:
+              proxy:
+                extraSANs:
+                  - vcluster-test.vcluster-test.svc.cluster.local
+              ingress:
+                enabled: true
+                host: "my-host.com"
+            exportKubeConfig:
+              secret:
+                name: vcluster-kubeconfig
+              server: https://localhost:8443
+        providerConfigRef:
+          name: helm-provider
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.forProvider.namespace
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: metadata.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-vcluster"
+    - type: CombineFromComposite
+      combine:
+        variables:
+        - fromFieldPath: metadata.name
+        - fromFieldPath: metadata.name
+        strategy: string
+        string:
+          fmt: "%s-vcluster.%s.svc.cluster.local"
+      toFieldPath: spec.forProvider.values.controlPlane.proxy.extraSANs[0]
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.forProvider.values.controlPlane.ingress.host
+      transforms:
+      - type: string
+        string:
+          fmt: "%s.vcluster.cnoe.localtest.me"
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.forProvider.values.exportKubeConfig.server
+      transforms:
+      - type: string
+        string:
+                fmt: "https://%s.vcluster.cnoe.localtest.me:8443"
+  - name: argo-cluster
+    base:
+      apiVersion: cluster.argocd.crossplane.io/v1alpha1
+      kind: Cluster
+      name: vcluster-test
+      spec:
+        forProvider:
+          labels:
+            managed-by: crossplane
+          config:
+            kubeconfigSecretRef:
+              key: config
+              name: vc-vcluster-test-vcluster
+              namespace: vcluster-test
+          name: vcluster-test
+        providerConfigRef:
+          name: argocd-provider
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.forProvider.config.kubeconfigSecretRef.namespace
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.forProvider.config.kubeconfigSecretRef.name
+      transforms:
+      - type: string
+        string:
+          fmt: "vc-%s-vcluster"
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: metadata.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-argo-ref"
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.forProvider.name
+  - name: cluster-usage
+    base:
+      apiVersion: apiextensions.crossplane.io/v1beta1
+      kind: Usage
+      name: argo-cluster-uses-helm-release
+      spec:
+        of:
+          apiVersion: helm.crossplane.io/v1beta1
+          kind: Release
+          resourceRef:
+            name: vcluster-test
+        by:
+          apiVersion: cluster.argocd.crossplane.io/v1alpha1
+          kind: Cluster
+          resourceRef:
+            name: my-prometheus-chart
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.of.resourceRef.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-vcluster"
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.by.resourceRef.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-argo-ref"
+  - name: observe-delete-namespace
+    base:
+      apiVersion: kubernetes.crossplane.io/v1alpha1
+      kind: Object
+      metadata:
+        name: foo
+      spec:
+        managementPolicy: ObserveDelete
+        forProvider:
+          manifest:
+            apiVersion: v1
+            kind: Namespace
+        providerConfigRef:
+          name: kubernetes-provider
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: metadata.name

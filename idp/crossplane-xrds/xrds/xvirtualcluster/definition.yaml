@@ -1,0 +1,30 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xvirtualclusters.idp.lieberlois
+spec:
+  group: idp.lieberlois
+  names:
+    kind: XVirtualCluster
+    plural: xvirtualclusters
+  claimNames:
+    kind: VirtualCluster
+    plural: virtualclusters
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              vcluster:
+                type: object
+                properties:
+                  values:
+                    description: Values for vcluster Helm chart
+                    type: object
+

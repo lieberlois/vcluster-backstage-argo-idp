@@ -1,23 +1,21 @@
-# The ArgoCD Application for crossplane core components themselves
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: tenants
+  name: crossplane
   namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "10"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   project: default
   source:
-    repoURL: https://github.com/lieberlois/vcluster-backstage-argo-idp
+    repoURL: cnoe://idp/crossplane
     targetRevision: HEAD
-    path: tenants
+    path: .
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: crossplane-system
   syncPolicy:
     automated:
       prune: true
