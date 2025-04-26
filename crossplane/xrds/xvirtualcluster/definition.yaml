@@ -27,17 +27,4 @@ spec:
                   values:
                     description: Values for vcluster Helm chart
                     type: object
-            # required:
-            # - vcluster-values
-          # status:
-          #   type: object
-          #   properties:
-          #     vcluster:
-          #       type: object
-          #       properties:
-          #         kubeconfigSecretName:
-          #           description: Name of the secret that holds the Kubeconfig for the virtual cluster.
-          #           type: string
-          #         kubeconfigSecretKey:
-          #           description: Name of the key in the secret that hold Kubeconfig for the virtual cluster.
-          #           type: string
+

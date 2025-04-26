@@ -3,7 +3,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: crossplane
+  name: crossplane-deployment
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -14,7 +14,7 @@ spec:
   source:
     repoURL: https://github.com/lieberlois/vcluster-backstage-argo-idp
     targetRevision: HEAD
-    path: crossplane
+    path: crossplane/deployment
   destination:
     server: https://kubernetes.default.svc
     namespace: crossplane-system
@@ -28,7 +28,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: crossplane-resources
+  name: crossplane-providers
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "1"
@@ -40,7 +40,7 @@ spec:
       repoURL: https://github.com/lieberlois/vcluster-backstage-argo-idp
       revision: HEAD
       directories:
-        - path: crossplane-resources/*
+        - path: crossplane/providers/*
       requeueAfterSeconds: 30
   template:
     metadata:
@@ -62,5 +62,44 @@ spec:
         automated:
           prune: true
           selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: crossplane-xrds
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+  - git:
+      repoURL: https://github.com/lieberlois/vcluster-backstage-argo-idp
+      revision: HEAD
+      directories:
+        - path: crossplane/xrds/*
+      requeueAfterSeconds: 30
+  template:
+    metadata:
+      name: '{{.path.basename}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/lieberlois/vcluster-backstage-argo-idp
+        targetRevision: HEAD
+        path: '{{.path.path}}'
+        directory:
+          recurse: true
+      destination:
+        namespace: default
+        server: https://kubernetes.default.svc
+      syncPolicy:
+        syncOptions:
+        - CreateNamespace=true
+        automated:
+          prune: true
+          selfHeal: true
+
 
 
