@@ -27,6 +27,9 @@ spec:
               proxy:
                 extraSANs:
                   - vcluster-test.vcluster-test.svc.cluster.local
+              ingress:
+                enabled: true
+                host: "my-host.com"
             exportKubeConfig:
               secret:
                 name: vcluster-kubeconfig
