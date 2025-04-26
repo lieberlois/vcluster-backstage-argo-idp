@@ -33,7 +33,7 @@ spec:
             exportKubeConfig:
               secret:
                 name: vcluster-kubeconfig
-              server: https://vcluster-test.vcluster-test.svc.cluster.local
+              server: https://localhost:8443
         providerConfigRef:
           name: helm-provider
     patches:
