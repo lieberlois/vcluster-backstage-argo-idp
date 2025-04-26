@@ -3,7 +3,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: tenant-applications
+  name: tenants
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "10"
@@ -14,10 +14,7 @@ spec:
   source:
     repoURL: https://github.com/lieberlois/vcluster-backstage-argo-idp
     targetRevision: HEAD
-    path: tenant-applications
-    directory:
-      include: '*/virtualcluster.yaml'
-      recurse: true
+    path: tenants
   destination:
     server: https://kubernetes.default.svc
     namespace: default

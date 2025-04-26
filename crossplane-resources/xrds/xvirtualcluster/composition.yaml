@@ -30,7 +30,7 @@ spec:
             exportKubeConfig:
               secret:
                 name: vcluster-kubeconfig
-              server: https://vcluster-test.vcluster-test.svc.cluster.local
+              server: https://localhost:8443
         providerConfigRef:
           name: helm-provider
     patches:
@@ -74,7 +74,7 @@ spec:
           config:
             kubeconfigSecretRef:
               key: config
-              name: vcluster-kubeconfig
+              name: vc-vcluster-test-vcluster
               namespace: vcluster-test
           name: vcluster-test
         providerConfigRef:
@@ -83,6 +83,13 @@ spec:
     - type: FromCompositeFieldPath
       fromFieldPath: metadata.name
       toFieldPath: spec.forProvider.config.kubeconfigSecretRef.namespace
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.forProvider.config.kubeconfigSecretRef.name
+      transforms:
+      - type: string
+        string:
+          fmt: "vc-%s-vcluster"
     - type: FromCompositeFieldPath
       fromFieldPath: metadata.name
       toFieldPath: metadata.name

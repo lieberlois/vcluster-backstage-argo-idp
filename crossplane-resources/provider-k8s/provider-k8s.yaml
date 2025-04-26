@@ -3,6 +3,8 @@ apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
   name: provider-kubernetes
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   package: xpkg.upbound.io/upbound/provider-kubernetes:v0.16.0
   runtimeConfigRef:
@@ -14,6 +16,8 @@ apiVersion: pkg.crossplane.io/v1beta1
 kind: DeploymentRuntimeConfig
 metadata:
   name: provider-kubernetes
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   serviceAccountTemplate:
     metadata:
