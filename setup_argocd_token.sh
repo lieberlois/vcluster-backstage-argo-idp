@@ -27,5 +27,6 @@ if [[ -z "$ARGOCD_TOKEN" ]]; then
   exit 1
 fi
 
+kubectl create namespace crossplane-system || true
 kubectl create secret generic argocd-credentials -n crossplane-system --from-literal=authToken="$ARGOCD_TOKEN" || true
 kubectl get secret -n crossplane-system argocd-credentials -o yaml

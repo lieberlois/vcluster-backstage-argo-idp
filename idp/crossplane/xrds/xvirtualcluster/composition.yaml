@@ -33,7 +33,7 @@ spec:
             exportKubeConfig:
               secret:
                 name: vcluster-kubeconfig
-              server: https://localhost:8443
+              server: https://vcluster-test.vcluster-test.svc.cluster.local
         providerConfigRef:
           name: helm-provider
     patches:
@@ -56,15 +56,20 @@ spec:
         string:
           fmt: "%s-vcluster.%s.svc.cluster.local"
       toFieldPath: spec.forProvider.values.controlPlane.proxy.extraSANs[0]
-    - type: CombineFromComposite
-      combine:
-        variables:
-        - fromFieldPath: metadata.name
-        - fromFieldPath: metadata.name
-        strategy: string
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.forProvider.values.controlPlane.ingress.host
+      transforms:
+      - type: string
         string:
-              fmt: "https://%s-vcluster.%s.svc.cluster.local"
+          fmt: "%s.vcluster.cnoe.localtest.me"
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
       toFieldPath: spec.forProvider.values.exportKubeConfig.server
+      transforms:
+      - type: string
+        string:
+          fmt: "https://%s.vcluster.cnoe.localtest.me:8443"
   - name: argo-cluster
     base:
       apiVersion: cluster.argocd.crossplane.io/v1alpha1
