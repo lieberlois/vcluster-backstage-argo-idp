@@ -2,7 +2,7 @@
 
 if ! kind get clusters | grep kind >/dev/null; then
   echo Creating local cluster...
-  kind create cluster
+  kind create cluster --config kind-config.yaml
 fi
 
 if [[ "$(kubectl config current-context)" != "kind-kind" ]]; then
