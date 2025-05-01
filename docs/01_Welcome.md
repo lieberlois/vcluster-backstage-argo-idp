@@ -30,6 +30,8 @@ ArgoCD and GitHub.
 recommend allocating enough resources to the Virtual Machine. I used [Colima](https://github.com/abiosoft/colima)
 with the following startup command: `colima start --dns 8.8.8.8 --dns 1.1.1.1 --memory 6 --cpu 3`.
 
+Through the course of this guide, the `main` branch of this repository contains all manifests etc. in the final state. If you get stuck or want to compare your solution, feel free to check it out whenever you want.
+
 ---
 
 Now without further ado, let's get started! 🚀
