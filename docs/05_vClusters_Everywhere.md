@@ -123,4 +123,4 @@ KUBECONFIG=CONFIG kubectl get pods
 
 ---
 
-Great Job 🎉🎉 you have successfully completed this section!
+Great Job 🎉🎉 you have successfully completed this section! To clean up all of what you did, run `kind delete cluster`.
