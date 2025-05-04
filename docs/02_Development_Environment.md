@@ -2,7 +2,7 @@
 
 In this section, we will set up our local environment. If you have no Container Runtime running,
 start this now. On MacOS I used `colima start --dns 8.8.8.8 --dns 1.1.1.1 --memory 6 --cpu 3` for this.
-You can check if everything is running properly using `docker ps` (or Podman, or whatever CLI you are using).
+You can check if everything is running properly using `docker ps` (or Podman, or whatever CLI you are using). Make sure you have this repository cloned. Also, make sure you have created a new public repository in GitHub that you can use in this workshop.
 
 ## Kubernetes 🐳
 
