@@ -25,7 +25,7 @@ Now that you have access feel free to explore the existing setup. Finish the ste
 
 ## Configuring an ArgoCD Token
 
-Similar to the previous sessions, we need to set up an ArgoCD user with a token and appropriate permissions. Since this setup a) ships a default configuration and b) manages ArgoCD via ArgoCD, the approach will be a bit different.
+Similar to the previous sessions, we need to set up an ArgoCD user with a token and appropriate permissions. Since this setup a) ships a default configuration and b) manages ArgoCD via ArgoCD, the approach will be a bit different. In theory idpbuilder supports [customizations](https://cnoe.io/docs/intro/idpbuilder/override) of the installed tools, however there was a [bug (#515)](https://github.com/cnoe-io/idpbuilder/issues/515) at the time of writing this page.
 
 1. Clone the ArgoCD repository from Gitea
 2. Find the manifest of the ConfigMap `argocd-rbac-cm` in `resource1.yaml`

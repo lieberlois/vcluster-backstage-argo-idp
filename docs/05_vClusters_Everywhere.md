@@ -113,13 +113,17 @@ Fetch the Kubeconfig of your vCluster. You can use the following command that wi
 kubectl get secret -n <your-vcluster-namespace> vcluster-kubeconfig -o jsonpath='{.data.config}' | base64 -d > CONFIG
 ```
 
-Finally create a port-forward to the Kube API of the vCluster. In the real world, this can be exposed e.g. using an Ingress. Find the name of the Kube API service using `kubectl get service -n <your-vcluster-namespace>`. It should be called `<your-vcluster-namespace>-vcluster`. Create a port-forward using `k port-forward -n <your-vcluster-namespace> svc/<your-vcluster-service> 8443:443`. 
+We did not bother setting up an Ingress controller in this local setup, which would be the proper solution in a real scenario. Since we are running all of this on our localhost, edit the file `CONFIG` and replace the value of `clusters[0].cluster.server` with `https://localhost:6443`.
+
+Finally create a port-forward to the Kube API of the vCluster. In the real world, this can be exposed e.g. using an Ingress. Find the name of the Kube API service using `kubectl get service -n <your-vcluster-namespace>`. It should be called `<your-vcluster-namespace>-vcluster`. Create a port-forward using `k port-forward -n <your-vcluster-namespace> svc/<your-vcluster-service> 6443:443`. 
 
 Now access the vCluster by prefixing kubectl commands with the `KUBECONFIG` variable pointing to the path of the config we extracted in the previous step:
 
 ```bash
-KUBECONFIG=CONFIG kubectl get pods
+KUBECONFIG=CONFIG kubectl get pods -A
 ```
+
+Do you see the guestbook (sample app) application running in the vCluster?
 
 ---
 

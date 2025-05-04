@@ -19,7 +19,7 @@ Monitor the `argocd` namespace to assert everything is up and running using `kub
 ```bash
 # Fetch ArgoCD admin secret, access only the password and run a base64 decode.
 # Write this password down somewhere for convenient access.
-kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d | xargs echo
 
 # Create a port-forward to ArgoCD
 kubectl port-forward -n argocd svc/argocd-server 8443:443
@@ -81,5 +81,5 @@ kubectl create namespace crossplane-system || true
 kubectl create secret generic argocd-credentials -n crossplane-system --from-literal=authToken="$ARGOCD_TOKEN" || true
 
 # Assert the secret contains a token and not "null" or similar - if not, try again or reach out for help
-kubectl get secret -n crossplane-system argocd-credentials -o yaml
+kubectl get secret -n crossplane-system argocd-credentials -o jsonpath='{.data.authToken}' | base64 -d | xargs echo
 ```
