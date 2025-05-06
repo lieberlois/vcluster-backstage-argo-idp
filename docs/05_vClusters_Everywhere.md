@@ -44,7 +44,7 @@ Monitor the ArgoCD UI - nothing should happen just yet. Note that while the use 
 
 ---
 
-In our system, we decide to do everything via GitOps - thus we also want to deploy our `VirtualCluster` manifests via GitOps. In the real world, this could be a dedicated repository, however in this session, we will add them in this repo. Create a directory `tenants`. Now add the following ArgoCD Application Code that will automatically apply all the tenant manifests:
+In our system, we decide to do everything via GitOps - thus we also want to deploy our `VirtualCluster` manifests via GitOps. In the real world, this could be a dedicated repository, however in this session, we will add them in this repo. Create a directory `tenants`. Now add the following ArgoCD Application Code to `appsets/tenants.yaml` that will automatically apply all the tenant manifests:
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
